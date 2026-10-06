@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Tabel Kebenaran & Verifikator Argumen</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .symbol-btn {
+            transition: all 0.15s ease;
+        }
+        .symbol-btn:active {
+            transform: scale(0.92);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="bg-gradient-to-r from-indigo-700 via-blue-600 to-indigo-800 text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-indigo-900/50 text-indigo-200 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-2">
+                        <span>PJBL-1 Logika Informatika</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Simulator Tabel Kebenaran & Verifikator Argumen</h1>
+                    <p class="text-indigo-100 text-sm mt-1">Aplikasi analisis kebenaran logika proposisional & pengujian validitas argumen</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-indigo-400/30 mt-6 gap-2 overflow-x-auto">
+                <button id="tab-btn-sim" onclick="switchTab('sim')" class="tab-btn py-2.5 px-5 font-medium text-sm rounded-t-lg transition flex items-center gap-2 bg-white text-indigo-700 font-semibold shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    Simulator Tabel Kebenaran
+                </button>
+                <button id="tab-btn-ver" onclick="switchTab('ver')" class="tab-btn py-2.5 px-5 font-medium text-sm rounded-t-lg transition flex items-center gap-2 text-indigo-100 hover:bg-indigo-600/50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Verifikator Argumen
+                </button>
+                <button id="tab-btn-guide" onclick="switchTab('guide')" class="tab-btn py-2.5 px-5 font-medium text-sm rounded-t-lg transition flex items-center gap-2 text-indigo-100 hover:bg-indigo-600/50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Panduan & Notasi
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+
+        <!-- TAB 1: SIMULATOR TABEL KEBENARAN -->
+        <section id="tab-sim" class="tab-content block space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-1">Input Ekspresi Logika</h2>
+                <p class="text-slate-500 text-sm mb-4">Masukkan variabel (misal: P, Q, R) dan operator logika yang sesuai.</p>
+
+                <!-- Shortcut Toolbar -->
+                <div class="mb-3 flex flex-wrap items-center gap-2 bg-slate-100 p-2 rounded-lg text-xs font-medium text-slate-600">
+                    <span class="text-slate-500 font-semibold px-1">Toolbar Simbol:</span>
+                    <button type="button" onclick="insertSymbol('sim-input', '¬')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">¬ (NOT)</button>
+                    <button type="button" onclick="insertSymbol('sim-input', ' ∧ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">∧ (AND)</button>
+                    <button type="button" onclick="insertSymbol('sim-input', ' ∨ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">∨ (OR)</button>
+                    <button type="button" onclick="insertSymbol('sim-input', ' → ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">→ (IMP)</button>
+                    <button type="button" onclick="insertSymbol('sim-input', ' ↔ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">↔ (BIIMP)</button>
+                    <button type="button" onclick="insertSymbol('sim-input', '(')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2 py-1 rounded shadow-sm font-bold">(</button>
+                    <button type="button" onclick="insertSymbol('sim-input', ')')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2 py-1 rounded shadow-sm font-bold">)</button>
+                </div>
+
+                <!-- Input & Controls -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="sim-input" value="(P → Q) ∧ P" placeholder="Contoh: (P -> Q) & P" class="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-base">
+                    <button onclick="generateTruthTable()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm transition flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Generate Tabel
+                    </button>
+                </div>
+
+                <!-- Presets -->
+                <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <span class="font-medium">Contoh Preset:</span>
+                    <button onclick="loadSimPreset('(P → Q) ∧ P')" class="hover:underline text-indigo-600">(P → Q) ∧ P</button> •
+                    <button onclick="loadSimPreset('¬(P ∧ Q) ↔ (¬P ∨ ¬Q)')" class="hover:underline text-indigo-600">Hukum De Morgan</button> •
+                    <button onclick="loadSimPreset('P ∨ ¬P')" class="hover:underline text-indigo-600">Tautologi (P ∨ ¬P)</button> •
+                    <button onclick="loadSimPreset('P ∧ ¬P')" class="hover:underline text-indigo-600">Kontradiksi (P ∧ ¬P)</button> •
+                    <button onclick="loadSimPreset('((P → Q) ∧ (Q → R)) → (P → R)')" class="hover:underline text-indigo-600">Silogisme Hipotetis</button>
+                </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="sim-error" class="hidden bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-sm flex items-start gap-3">
+                <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div id="sim-error-msg">Format ekspresi tidak valid.</div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="sim-result" class="hidden space-y-4">
+                <!-- Summary Stats Badge -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span id="badge-vars" class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full border border-slate-200">2 Variabel</span>
+                        <span id="badge-rows" class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full border border-slate-200">4 Kombinasi Baris</span>
+                        <span id="badge-type" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200">Kontingensi</span>
+                    </div>
+                    <button onclick="copySimCSV()" class="text-xs text-slate-600 hover:text-indigo-600 flex items-center gap-1 font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        Salin Format CSV
+                    </button>
+                </div>
+
+                <!-- Table Output -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead id="sim-table-head" class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                <!-- Dynamic Headers -->
+                            </thead>
+                            <tbody id="sim-table-body" class="divide-y divide-slate-200 text-sm font-mono">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: VERIFIKATOR ARGUMEN -->
+        <section id="tab-ver" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-1">Pengujian Validitas Argumen</h2>
+                <p class="text-slate-500 text-sm mb-4">Masukkan semua premis yang ada beserta satu konklusi untuk menguji apakah argumen bernilai **Valid** atau **Tidak Valid**.</p>
+
+                <!-- Shortcut Toolbar -->
+                <div class="mb-4 flex flex-wrap items-center gap-2 bg-slate-100 p-2 rounded-lg text-xs font-medium text-slate-600">
+                    <span class="text-slate-500 font-semibold px-1">Toolbar Simbol:</span>
+                    <button type="button" onclick="insertActiveSymbol('¬')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">¬ (NOT)</button>
+                    <button type="button" onclick="insertActiveSymbol(' ∧ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">∧ (AND)</button>
+                    <button type="button" onclick="insertActiveSymbol(' ∨ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">∨ (OR)</button>
+                    <button type="button" onclick="insertActiveSymbol(' → ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">→ (IMP)</button>
+                    <button type="button" onclick="insertActiveSymbol(' ↔ ')" class="symbol-btn bg-white hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded shadow-sm text-slate-800 font-bold">↔ (BIIMP)</button>
+                </div>
+
+                <!-- Input Premis List -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700">Premis-Premis:</label>
+                    <div id="premis-container" class="space-y-2">
+                        <div class="flex items-center gap-2 premis-row">
+                            <span class="text-xs font-bold text-slate-400 w-16">Premis 1:</span>
+                            <input type="text" value="P → Q" focus-target="true" class="ver-input flex-1 px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm">
+                            <button onclick="removePremisRow(this)" class="text-slate-400 hover:text-rose-500 p-2 rounded-lg transition" title="Hapus Premis">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2 premis-row">
+                            <span class="text-xs font-bold text-slate-400 w-16">Premis 2:</span>
+                            <input type="text" value="P" focus-target="true" class="ver-input flex-1 px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm">
+                            <button onclick="removePremisRow(this)" class="text-slate-400 hover:text-rose-500 p-2 rounded-lg transition" title="Hapus Premis">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="addPremisRow()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 mt-1 py-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        + Tambah Premis
+                    </button>
+                </div>
+
+                <!-- Input Konklusi -->
+                <div class="mt-5 space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700">Konklusi (Kesimpulan):</label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-400 w-16">Konklusi:</span>
+                        <input type="text" id="ver-konklusi" value="Q" focus-target="true" class="ver-input flex-1 px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm">
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-6">
+                    <button onclick="verifyArgument()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-sm transition flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Verifikasi Argumen
+                    </button>
+                </div>
+
+                <!-- Argument Presets -->
+                <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500 pt-3 border-t border-slate-100">
+                    <span class="font-medium">Preset Argumen Standar:</span>
+                    <button onclick="loadArgPreset(['P → Q', 'P'], 'Q')" class="hover:underline text-indigo-600">Modus Ponens (Valid)</button> •
+                    <button onclick="loadArgPreset(['P → Q', '¬Q'], '¬P')" class="hover:underline text-indigo-600">Modus Tollens (Valid)</button> •
+                    <button onclick="loadArgPreset(['P → Q', 'Q'], 'P')" class="hover:underline text-rose-600">Gugur Akibat (Invalid)</button> •
+                    <button onclick="loadArgPreset(['P ∨ Q', '¬P'], 'Q')" class="hover:underline text-indigo-600">Silogisme Disjungtif (Valid)</button>
+                </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="ver-error" class="hidden bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-sm flex items-start gap-3">
+                <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div id="ver-error-msg">Format premis atau konklusi tidak valid.</div>
+            </div>
+
+            <!-- Verification Results -->
+            <div id="ver-result" class="hidden space-y-4">
+                <!-- Status Card -->
+                <div id="ver-status-card" class="p-5 rounded-xl border flex items-start gap-4 shadow-sm">
+                    <!-- Dynamic Icon & Result Text -->
+                </div>
+
+                <!-- Counterexamples (Baris Kritis) if Invalid -->
+                <div id="counterexample-card" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-5 text-amber-900 space-y-2">
+                    <h3 class="font-bold text-amber-900 flex items-center gap-2 text-sm">
+                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Baris Kritis Pembukti Invaliditas (Counterexample)
+                    </h3>
+                    <p class="text-xs text-amber-800">
+                        Argumen menjadi **TIDAK VALID** karena terdapat kondisi nilai variabel di mana **semua premis bernilai BENAR (T)**, namun **konklusi bernilai SALAH (F)**:
+                    </p>
+                    <div id="counterexample-list" class="font-mono text-xs bg-amber-100/60 p-3 rounded-lg border border-amber-200 divide-y divide-amber-200/60">
+                        <!-- Dynamic list of failing rows -->
+                    </div>
+                </div>
+
+                <!-- Full Truth Table for Argument -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 text-sm">Tabel Pengujian Seluruh Baris</h3>
+                        <span class="text-xs text-slate-500">Baris dengan latar kuning/merah menunjukkan baris kritis</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead id="ver-table-head" class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                <!-- Dynamic Headers -->
+                            </thead>
+                            <tbody id="ver-table-body" class="divide-y divide-slate-200 text-sm font-mono">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PANDUAN & NOTASI -->
+        <section id="tab-guide" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Panduan Penggunaan & Notasi Operator</h2>
+                    <p class="text-slate-600 text-sm">Aplikasi ini mendukung berbagai standar penulisan simbol logika. Anda bisa menggunakan simbol langsung dari toolbar, atau mengetikkan teks alternatifnya secara bebas.</p>
+                </div>
+
+                <!-- Operators Cheat Sheet Table -->
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-100 text-slate-700 font-bold text-xs uppercase">
+                            <tr>
+                                <th class="p-3 border-b">Operasi Logika</th>
+                                <th class="p-3 border-b">Simbol Baku</th>
+                                <th class="p-3 border-b">Alternatif Teks Keyboard</th>
+                                <th class="p-3 border-b">Penjelasan Kebenaran</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Negasi (NOT)</td>
+                                <td class="p-3 font-mono font-bold text-indigo-600">¬ P</td>
+                                <td class="p-3 font-mono text-slate-600">~P , !P , NOT P</td>
+                                <td class="p-3 text-slate-600">Membalik nilai kebenaran (T jadi F, F jadi T).</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Konjungsi (AND)</td>
+                                <td class="p-3 font-mono font-bold text-indigo-600">P ∧ Q</td>
+                                <td class="p-3 font-mono text-slate-600">P & Q , P AND Q</td>
+                                <td class="p-3 text-slate-600">Bernilai T hanya jika **kedua** variabel bernilai T.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Disjungsi (OR)</td>
+                                <td class="p-3 font-mono font-bold text-indigo-600">P ∨ Q</td>
+                                <td class="p-3 font-mono text-slate-600">P | Q , P OR Q</td>
+                                <td class="p-3 text-slate-600">Bernilai T jika **salah satu atau kedua** variabel bernilai T.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Implikasi (Jika... Maka)</td>
+                                <td class="p-3 font-mono font-bold text-indigo-600">P → Q</td>
+                                <td class="p-3 font-mono text-slate-600">P -> Q , P IMP Q</td>
+                                <td class="p-3 text-slate-600">Bernilai F **hanya jika** P = T dan Q = F.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Biimplikasi (Jika dan Hanya Jika)</td>
+                                <td class="p-3 font-mono font-bold text-indigo-600">P ↔ Q</td>
+                                <td class="p-3 font-mono text-slate-600">P <-> Q , P IFF Q</td>
+                                <td class="p-3 text-slate-600">Bernilai T jika P dan Q memiliki **nilai kebenaran yang sama**.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Theory Concepts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-900">
+                        <h3 class="font-bold text-base mb-1">Klasifikasi Ekspresi Logika</h3>
+                        <ul class="text-xs space-y-1.5 list-disc list-inside text-indigo-800">
+                            <li><strong class="font-semibold">Tautologi:</strong> Ekspresi bernilai Benar (T) pada *semua* baris kombinasi.</li>
+                            <li><strong class="font-semibold">Kontradiksi:</strong> Ekspresi bernilai Salah (F) pada *semua* baris kombinasi.</li>
+                            <li><strong class="font-semibold">Kontingensi:</strong> Ekspresi bernilai Benar (T) pada sebagian baris dan Salah (F) pada sebagian baris lainnya.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-900">
+                        <h3 class="font-bold text-base mb-1">Kriteria Argumen Valid</h3>
+                        <p class="text-xs leading-relaxed text-emerald-800">
+                            Sebuah argumen dikatakan **VALID (SAH)** apabila **TIDAK PERNAH TERJADI** kondisi di mana semua premis bernilai Benar (T), tetapi konklusinya bernilai Salah (F). Jika ada minimal 1 baris yang mana semua premis T tetapi konklusi F, maka argumen **TIDAK VALID**.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4">
+            Aplikasi PJBL-1 Simulator Tabel Kebenaran & Verifikator Argumen — Siap Presentasi & Demo
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // Global state for focus inputs
+        let lastFocusedInput = null;
+
+        document.addEventListener('focusin', (e) => {
+            if (e.target && (e.target.id === 'sim-input' || e.target.classList.contains('ver-input'))) {
+                lastFocusedInput = e.target;
+            }
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-white', 'text-indigo-700', 'shadow-sm', 'font-semibold');
+                el.classList.add('text-indigo-100', 'hover:bg-indigo-600/50');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('bg-white', 'text-indigo-700', 'shadow-sm', 'font-semibold');
+            activeBtn.classList.remove('text-indigo-100', 'hover:bg-indigo-600/50');
+        }
+
+        // Symbol Insertion Helpers
+        function insertSymbol(inputId, symbol) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const start = input.selectionStart || input.value.length;
+            const end = input.selectionEnd || input.value.length;
+            input.value = input.value.substring(0, start) + symbol + input.value.substring(end);
+            input.focus();
+            input.setSelectionRange(start + symbol.length, start + symbol.length);
+        }
+
+        function insertActiveSymbol(symbol) {
+            if (lastFocusedInput) {
+                const start = lastFocusedInput.selectionStart || lastFocusedInput.value.length;
+                const end = lastFocusedInput.selectionEnd || lastFocusedInput.value.length;
+                lastFocusedInput.value = lastFocusedInput.value.substring(0, start) + symbol + lastFocusedInput.value.substring(end);
+                lastFocusedInput.focus();
+                lastFocusedInput.setSelectionRange(start + symbol.length, start + symbol.length);
+            } else {
+                insertSymbol('sim-input', symbol);
+            }
+        }
+
+        /**
+         * LOGICAL PARSER & EVALUATOR ENGINE
+         * Precedence (Low to High): BIIMP (<->) -> IMP (->) -> OR (v) -> AND (&) -> NOT (~)
+         */
+
+        function tokenize(str) {
+            // Standardize Unicode & Text Symbols
+            str = str.replace(/↔|<->|<=>|\bBIIMP\b|\bIFF\b/gi, ' BIIMP ');
+            str = str.replace(/→|->|=>|\bIMP\b/gi, ' IMP ');
+            str = str.replace(/¬|~|!|\bNOT\b/gi, ' NOT ');
+            str = str.replace(/∧|&|\bAND\b/gi, ' AND ');
+            str = str.replace(/∨|\||\bOR\b/gi, ' OR ');
+
+            let tokens = [];
+            let i = 0;
+
+            while (i < str.length) {
+                let ch = str[i];
+                if (/\s/.test(ch)) { i++; continue; }
+                if (ch === '(') { tokens.push({ type: 'LPAREN' }); i++; continue; }
+                if (ch === ')') { tokens.push({ type: 'RPAREN' }); i++; continue; }
+
+                let rest = str.slice(i);
+                if (rest.startsWith('BIIMP')) { tokens.push({ type: 'BIIMP' }); i += 5; continue; }
+                if (rest.startsWith('IMP')) { tokens.push({ type: 'IMP' }); i += 3; continue; }
+                if (rest.startsWith('AND')) { tokens.push({ type: 'AND' }); i += 3; continue; }
+                if (rest.startsWith('OR')) { tokens.push({ type: 'OR' }); i += 2; continue; }
+                if (rest.startsWith('NOT')) { tokens.push({ type: 'NOT' }); i += 3; continue; }
+
+                // Variable identifier (e.g., P, Q, R, A, B)
+                let varMatch = rest.match(/^[A-Za-z][A-Za-z0-9]*/);
+                if (varMatch) {
+                    let name = varMatch[0].toUpperCase();
+                    tokens.push({ type: 'VAR', name: name });
+                    i += varMatch[0].length;
+                    continue;
+                }
+
+                throw new Error(`Karakter tak dikenal: '${ch}'`);
+            }
+            return tokens;
+        }
+
+        class LogicParser {
+            constructor(tokens) {
+                this.tokens = tokens;
+                this.pos = 0;
+            }
+
+            peek() { return this.tokens[this.pos]; }
+            consume() { return this.tokens[this.pos++]; }
+
+            parse() {
+                if (this.tokens.length === 0) throw new Error("Ekspresi kosong!");
+                let ast = this.parseBiimp();
+                if (this.pos < this.tokens.length) {
+                    throw new Error("Sintaks tidak valid atau operator berlebih.");
+                }
+                return ast;
+            }
+
+            parseBiimp() {
+                let left = this.parseImp();
+                while (this.peek() && this.peek().type === 'BIIMP') {
+                    this.consume();
+                    let right = this.parseImp();
+                    left = { type: 'BIIMP', left, right };
+                }
+                return left;
+            }
+
+            parseImp() {
+                let left = this.parseOr();
+                if (this.peek() && this.peek().type === 'IMP') {
+                    this.consume();
+                    let right = this.parseImp(); // right-associative
+                    return { type: 'IMP', left, right };
+                }
+                return left;
+            }
+
+            parseOr() {
+                let left = this.parseAnd();
+                while (this.peek() && this.peek().type === 'OR') {
+                    this.consume();
+                    let right = this.parseAnd();
+                    left = { type: 'OR', left, right };
+                }
+                return left;
+            }
+
+            parseAnd() {
+                let left = this.parseNot();
+                while (this.peek() && this.peek().type === 'AND') {
+                    this.consume();
+                    let right = this.parseNot();
+                    left = { type: 'AND', left, right };
+                }
+                return left;
+            }
+
+            parseNot() {
+                if (this.peek() && this.peek().type === 'NOT') {
+                    this.consume();
+                    let expr = this.parseNot();
+                    return { type: 'NOT', expr };
+                }
+                return this.parsePrimary();
+            }
+
+            parsePrimary() {
+                let token = this.peek();
+                if (!token) throw new Error("Ekspresi belum selesai");
+
+                if (token.type === 'LPAREN') {
+                    this.consume();
+                    let expr = this.parseBiimp();
+                    if (!this.peek() || this.peek().type !== 'RPAREN') {
+                        throw new Error("Tanda kurung tutup ')' tidak ditemukan.");
+                    }
+                    this.consume();
+                    return expr;
+                }
+
+                if (token.type === 'VAR') {
+                    this.consume();
+                    return { type: 'VAR', name: token.name };
+                }
+
+                throw new Error(`Simbol tidak diharapkan: ${token.type}`);
+            }
+        }
+
+        function evaluateAST(node, env) {
+            switch (node.type) {
+                case 'VAR': return !!env[node.name];
+                case 'NOT': return !evaluateAST(node.expr, env);
+                case 'AND': return evaluateAST(node.left, env) && evaluateAST(node.right, env);
+                case 'OR': return evaluateAST(node.left, env) || evaluateAST(node.right, env);
+                case 'IMP': {
+                    let l = evaluateAST(node.left, env);
+                    let r = evaluateAST(node.right, env);
+                    return (!l) || r;
+                }
+                case 'BIIMP': {
+                    let l = evaluateAST(node.left, env);
+                    let r = evaluateAST(node.right, env);
+                    return l === r;
+                }
+                default: return false;
+            }
+        }
+
+        function extractVariables(node, set = new Set()) {
+            if (!node) return set;
+            if (node.type === 'VAR') {
+                set.add(node.name);
+            } else if (node.type === 'NOT') {
+                extractVariables(node.expr, set);
+            } else {
+                extractVariables(node.left, set);
+                extractVariables(node.right, set);
+            }
+            return set;
+        }
+
+        function formatAST(node) {
+            if (!node) return '';
+            switch (node.type) {
+                case 'VAR': return node.name;
+                case 'NOT': 
+                    return '¬' + (node.expr.type === 'VAR' ? formatAST(node.expr) : `(${formatAST(node.expr)})`);
+                case 'AND': return `(${formatAST(node.left)} ∧ ${formatAST(node.right)})`;
+                case 'OR': return `(${formatAST(node.left)} ∨ ${formatAST(node.right)})`;
+                case 'IMP': return `(${formatAST(node.left)} → ${formatAST(node.right)})`;
+                case 'BIIMP': return `(${formatAST(node.left)} ↔ ${formatAST(node.right)})`;
+            }
+        }
+
+        // TRUTH TABLE SIMULATOR LOGIC
+        let lastSimData = null;
+
+        function generateTruthTable() {
+            const inputStr = document.getElementById('sim-input').value.trim();
+            const errorBanner = document.getElementById('sim-error');
+            const resultDiv = document.getElementById('sim-result');
+
+            errorBanner.classList.add('hidden');
+            resultDiv.classList.add('hidden');
+
+            if (!inputStr) {
+                document.getElementById('sim-error-msg').innerText = "Silakan masukkan ekspresi logika terlebih dahulu.";
+                errorBanner.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const tokens = tokenize(inputStr);
+                const parser = new LogicParser(tokens);
+                const ast = parser.parse();
+
+                const vars = Array.from(extractVariables(ast)).sort();
+                if (vars.length === 0) {
+                    throw new Error("Tidak ada variabel yang ditemukan.");
+                }
+                if (vars.length > 6) {
+                    throw new Error("Maksimal 6 variabel untuk performa tampilan.");
+                }
+
+                // Generate Truth Combinations (2^n)
+                const totalCombinations = Math.pow(2, vars.length);
+                const rows = [];
+                let trueCount = 0;
+
+                for (let i = 0; i < totalCombinations; i++) {
+                    const env = {};
+                    for (let j = 0; j < vars.length; j++) {
+                        // Binary bit extraction
+                        const bit = (i >> (vars.length - 1 - j)) & 1;
+                        env[vars[j]] = (bit === 0); // 0 = True, 1 = False (standard truth table ordering: TTTT -> FFFF)
+                    }
+
+                    const res = evaluateAST(ast, env);
+                    if (res) trueCount++;
+
+                    rows.push({ env, res });
+                }
+
+                // Determine classification (Tautology, Contradiction, Contingency)
+                let typeText = "Kontingensi";
+                let typeClass = "bg-indigo-100 text-indigo-800 border-indigo-200";
+                if (trueCount === totalCombinations) {
+                    typeText = "Tautologi (Selalu Benar)";
+                    typeClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                } else if (trueCount === 0) {
+                    typeText = "Kontradiksi (Selalu Salah)";
+                    typeClass = "bg-rose-100 text-rose-800 border-rose-200";
+                }
+
+                // Render Summary Badges
+                document.getElementById('badge-vars').innerText = `${vars.length} Variabel (${vars.join(', ')})`;
+                document.getElementById('badge-rows').innerText = `${totalCombinations} Baris`;
+                const typeBadge = document.getElementById('badge-type');
+                typeBadge.innerText = typeText;
+                typeBadge.className = `text-xs font-bold px-3 py-1 rounded-full border ${typeClass}`;
+
+                // Build Table Headers
+                const formattedExpr = formatAST(ast);
+                const thead = document.getElementById('sim-table-head');
+                let headHtml = '<tr>';
+                vars.forEach(v => {
+                    headHtml += `<th class="p-3 border-b text-center border-r border-slate-200 bg-slate-100">${v}</th>`;
+                });
+                headHtml += `<th class="p-3 border-b text-center bg-indigo-50/80 text-indigo-900 font-bold">${formattedExpr}</th></tr>`;
+                thead.innerHTML = headHtml;
+
+                // Build Table Rows
+                const tbody = document.getElementById('sim-table-body');
+                tbody.innerHTML = '';
+
+                rows.forEach(r => {
+                    let rowHtml = '<tr class="hover:bg-slate-50/80 transition">';
+                    vars.forEach(v => {
+                        const val = r.env[v];
+                        const badgeClass = val 
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                            : 'bg-rose-100 text-rose-800 border-rose-200';
+                        rowHtml += `<td class="p-2.5 border-b text-center border-r border-slate-200"><span class="px-2 py-0.5 rounded text-xs font-bold border ${badgeClass}">${val ? 'T' : 'F'}</span></td>`;
+                    });
+
+                    const resVal = r.res;
+                    const resBadge = resVal 
+                        ? 'bg-emerald-600 text-white shadow-sm' 
+                        : 'bg-rose-600 text-white shadow-sm';
+
+                    rowHtml += `<td class="p-2.5 border-b text-center bg-indigo-50/30"><span class="px-3 py-1 rounded-md text-xs font-bold ${resBadge}">${resVal ? 'T' : 'F'}</span></td></tr>`;
+                    tbody.innerHTML += rowHtml;
+                });
+
+                lastSimData = { vars, formattedExpr, rows };
+                resultDiv.classList.remove('hidden');
+
+            } catch (err) {
+                document.getElementById('sim-error-msg').innerText = "Gagal memproses ekspresi: " + err.message;
+                errorBanner.classList.remove('hidden');
+            }
+        }
+
+        function loadSimPreset(expr) {
+            document.getElementById('sim-input').value = expr;
+            generateTruthTable();
+        }
+
+        function copySimCSV() {
+            if (!lastSimData) return;
+            let csv = lastSimData.vars.join(',') + ',' + lastSimData.formattedExpr + '\n';
+            lastSimData.rows.forEach(r => {
+                let row = lastSimData.vars.map(v => r.env[v] ? 'T' : 'F').join(',');
+                row += ',' + (r.res ? 'T' : 'F');
+                csv += row + '\n';
+            });
+
+            // Use executive copy fallback
+            const temp = document.createElement('textarea');
+            temp.value = csv;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            alert('Tabel kebenaran berhasil disalin ke clipboard dalam format CSV!');
+        }
+
+        // ARGUMENT VERIFIER LOGIC
+        function addPremisRow(val = '') {
+            const container = document.getElementById('premis-container');
+            const count = container.querySelectorAll('.premis-row').length + 1;
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-2 premis-row";
+            div.innerHTML = `
+                <span class="text-xs font-bold text-slate-400 w-16">Premis ${count}:</span>
+                <input type="text" value="${val}" focus-target="true" class="ver-input flex-1 px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm">
+                <button onclick="removePremisRow(this)" class="text-slate-400 hover:text-rose-500 p-2 rounded-lg transition" title="Hapus Premis">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            `;
+            container.appendChild(div);
+            updatePremisLabels();
+        }
+
+        function removePremisRow(btn) {
+            const container = document.getElementById('premis-container');
+            if (container.querySelectorAll('.premis-row').length <= 1) {
+                alert("Minimal harus ada 1 premis.");
+                return;
+            }
+            btn.closest('.premis-row').remove();
+            updatePremisLabels();
+        }
+
+        function updatePremisLabels() {
+            const rows = document.querySelectorAll('.premis-row');
+            rows.forEach((row, idx) => {
+                row.querySelector('span').innerText = `Premis ${idx + 1}:`;
+            });
+        }
+
+        function verifyArgument() {
+            const premisInputs = document.querySelectorAll('.premis-row input');
+            const konklusiInput = document.getElementById('ver-konklusi').value.trim();
+            const errorBanner = document.getElementById('ver-error');
+            const resultDiv = document.getElementById('ver-result');
+
+            errorBanner.classList.add('hidden');
+            resultDiv.classList.add('hidden');
+
+            const premisTexts = Array.from(premisInputs).map(i => i.value.trim()).filter(v => v !== '');
+
+            if (premisTexts.length === 0) {
+                document.getElementById('ver-error-msg').innerText = "Masukkan setidaknya 1 premis.";
+                errorBanner.classList.remove('hidden');
+                return;
+            }
+            if (!konklusiInput) {
+                document.getElementById('ver-error-msg').innerText = "Masukkan konklusi (kesimpulan).";
+                errorBanner.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Parse All Premises and Conclusion
+                const premisASTs = premisTexts.map(pt => {
+                    const tokens = tokenize(pt);
+                    return new LogicParser(tokens).parse();
+                });
+
+                const konklusiAST = new LogicParser(tokenize(konklusiInput)).parse();
+
+                // Extract all unique variables across all statements
+                const varSet = new Set();
+                premisASTs.forEach(ast => extractVariables(ast, varSet));
+                extractVariables(konklusiAST, varSet);
+
+                const vars = Array.from(varSet).sort();
+                if (vars.length === 0) throw new Error("Tidak ada variabel yang ditemukan.");
+
+                const totalCombinations = Math.pow(2, vars.length);
+                const tableData = [];
+                const counterexamples = [];
+                let isValid = true;
+
+                for (let i = 0; i < totalCombinations; i++) {
+                    const env = {};
+                    for (let j = 0; j < vars.length; j++) {
+                        const bit = (i >> (vars.length - 1 - j)) & 1;
+                        env[vars[j]] = (bit === 0);
+                    }
+
+                    const premisResults = premisASTs.map(ast => evaluateAST(ast, env));
+                    const konklusiResult = evaluateAST(konklusiAST, env);
+
+                    const allPremisesTrue = premisResults.every(r => r === true);
+                    const isCriticalFailingRow = allPremisesTrue && (!konklusiResult);
+
+                    if (isCriticalFailingRow) {
+                        isValid = false;
+                        counterexamples.push({ env, premisResults, konklusiResult });
+                    }
+
+                    tableData.push({ env, premisResults, konklusiResult, allPremisesTrue, isCriticalFailingRow });
+                }
+
+                // Render Status Banner
+                const statusCard = document.getElementById('ver-status-card');
+                if (isValid) {
+                    statusCard.className = "p-5 rounded-xl bg-emerald-50 border-emerald-200 text-emerald-900 border flex items-start gap-4 shadow-sm";
+                    statusCard.innerHTML = `
+                        <div class="bg-emerald-500 text-white p-2 rounded-lg shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-emerald-950">ARGUMEN VALID (SAH)</h3>
+                            <p class="text-xs text-emerald-800 mt-0.5 leading-relaxed">
+                                Dalam semua kondisi di mana seluruh premis bernilai **BENAR (T)**, konklusi terbukti **SELALU BENAR (T)**. Tidak ditemukan kontradiksi.
+                            </p>
+                        </div>
+                    `;
+                    document.getElementById('counterexample-card').classList.add('hidden');
+                } else {
+                    statusCard.className = "p-5 rounded-xl bg-rose-50 border-rose-200 text-rose-900 border flex items-start gap-4 shadow-sm";
+                    statusCard.innerHTML = `
+                        <div class="bg-rose-500 text-white p-2 rounded-lg shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-rose-950">ARGUMEN TIDAK VALID (INVALID)</h3>
+                            <p class="text-xs text-rose-800 mt-0.5 leading-relaxed">
+                                Ditemukan minimal 1 kombinasi di mana semua premis bernilai **BENAR (T)**, namun konklusi bernilai **SALAH (F)**.
+                            </p>
+                        </div>
+                    `;
+
+                    // Render Counterexample Summary
+                    const ceCard = document.getElementById('counterexample-card');
+                    const ceList = document.getElementById('counterexample-list');
+                    ceList.innerHTML = '';
+
+                    counterexamples.forEach((ce, idx) => {
+                        let assignStr = vars.map(v => `${v} = ${ce.env[v] ? 'T' : 'F'}`).join(', ');
+                        ceList.innerHTML += `
+                            <div class="py-1.5 flex items-center justify-between">
+                                <span><strong>Baris Kritis #${idx + 1}:</strong> [ ${assignStr} ]</span>
+                                <span class="bg-rose-200 text-rose-900 text-[10px] font-bold px-2 py-0.5 rounded">Premis: Semua T | Konklusi: F</span>
+                            </div>
+                        `;
+                    });
+
+                    ceCard.classList.remove('hidden');
+                }
+
+                // Render Verification Truth Table Header
+                const thead = document.getElementById('ver-table-head');
+                let headHtml = '<tr>';
+                vars.forEach(v => {
+                    headHtml += `<th class="p-3 border-b text-center border-r border-slate-200 bg-slate-100">${v}</th>`;
+                });
+                premisASTs.forEach((ast, idx) => {
+                    headHtml += `<th class="p-3 border-b text-center border-r border-slate-200 bg-slate-100">P${idx + 1}: ${formatAST(ast)}</th>`;
+                });
+                headHtml += `<th class="p-3 border-b text-center bg-indigo-100/70 text-indigo-900 font-bold">Konklusi: ${formatAST(konklusiAST)}</th></tr>`;
+                thead.innerHTML = headHtml;
+
+                // Render Table Body
+                const tbody = document.getElementById('ver-table-body');
+                tbody.innerHTML = '';
+
+                tableData.forEach(r => {
+                    let bgClass = "hover:bg-slate-50 transition";
+                    if (r.isCriticalFailingRow) {
+                        bgClass = "bg-rose-100/80 hover:bg-rose-100 font-semibold"; // Highlight failing critical row
+                    } else if (r.allPremisesTrue) {
+                        bgClass = "bg-emerald-50/60 hover:bg-emerald-50"; // Highlight valid premises row
+                    }
+
+                    let rowHtml = `<tr class="${bgClass}">`;
+                    vars.forEach(v => {
+                        const val = r.env[v];
+                        rowHtml += `<td class="p-2.5 border-b text-center border-r border-slate-200">${val ? 'T' : 'F'}</td>`;
+                    });
+
+                    r.premisResults.forEach(res => {
+                        rowHtml += `<td class="p-2.5 border-b text-center border-r border-slate-200 ${res ? 'text-emerald-700 font-bold' : 'text-slate-400'}">${res ? 'T' : 'F'}</td>`;
+                    });
+
+                    const konklusiVal = r.konklusiResult;
+                    const konklusiStyle = konklusiVal ? 'text-emerald-700 font-bold' : 'text-rose-600 font-bold';
+                    rowHtml += `<td class="p-2.5 border-b text-center ${konklusiStyle}">${konklusiVal ? 'T' : 'F'}</td></tr>`;
+
+                    tbody.innerHTML += rowHtml;
+                });
+
+                resultDiv.classList.remove('hidden');
+
+            } catch (err) {
+                document.getElementById('ver-error-msg').innerText = "Gagal memproses argumen: " + err.message;
+                errorBanner.classList.remove('hidden');
+            }
+        }
+
+        function loadArgPreset(premises, konklusi) {
+            const container = document.getElementById('premis-container');
+            container.innerHTML = '';
+            premises.forEach(p => addPremisRow(p));
+            document.getElementById('ver-konklusi').value = konklusi;
+            verifyArgument();
+        }
+
+        // Auto Run Default Preset on Load
+        window.onload = function() {
+            generateTruthTable();
+        };
+    </script>
+</body>
+</html>
