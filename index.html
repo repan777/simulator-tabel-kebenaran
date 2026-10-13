@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistem Klasifikasi Data dengan Himpunan</title>
+<style>
+:root{--navy:#14213d;--blue:#2563eb;--bg:#f4f7fb;--line:#dbe3ef;--text:#172033;--muted:#637083}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#14213d,#1d4ed8);color:white;padding:28px max(20px,calc((100% - 1180px)/2))}
+header .tag{font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+h1{margin:8px 0;font-size:clamp(25px,4vw,38px)}
+header p{max-width:780px;line-height:1.6}
+main{max-width:1180px;margin:24px auto;padding:0 18px 45px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 18px #15213b08}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:26px;margin-top:5px;color:var(--navy)}
+.layout{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+h2{font-size:18px;margin:0 0 14px;color:var(--navy)}
+h3{font-size:15px;margin:16px 0 8px}
+label{font-size:13px;color:var(--muted);display:block;margin:10px 0 6px}
+input,select,button{font:inherit}
+input,select{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;background:white;color:var(--text)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:650;cursor:pointer}
+button:hover{filter:brightness(.94)}
+button.secondary{background:#e9efff;color:#1d4ed8}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:#e9f2ff;color:#174ea6;border:1px solid #c8dcff;padding:6px 9px;border-radius:999px;font-size:12px}
+.result-box{background:#f7f9fd;border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:12px}
+.result-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.result-head strong{font-size:16px}
+.count{font-size:12px;background:#e0f2fe;color:#075985;padding:5px 8px;border-radius:999px}
+ul.results{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:7px}
+ul.results li{background:white;border:1px solid #e3eaf4;padding:9px 10px;border-radius:8px;font-size:13px}
+.empty{color:var(--muted);font-style:italic;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e5eaf2;vertical-align:top}
+th{color:#526177;background:#f8fafc}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+.wide{margin-top:18px}
+.note{font-size:12px;line-height:1.6;color:var(--muted);margin-top:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+.diagram{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.set-card{flex:1;min-width:160px;border-radius:12px;padding:12px;border:1px solid var(--line);background:#fff}
+.set-card b{display:block;margin-bottom:8px}
+.set-card span{font-size:12px;line-height:1.7;color:#42516a}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:450px){.row{grid-template-columns:1fr}.stat strong{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+<div class="tag">PJBL-2 · Pertemuan 5–7</div>
+<h1>Sistem Klasifikasi Data dengan Himpunan</h1>
+<p>Aplikasi pembelajaran untuk mengelompokkan mahasiswa berdasarkan mata kuliah dan menghitung operasi gabungan, irisan, selisih, serta komplemen secara otomatis.</p>
+</header>
+
+<main>
+<div class="stats">
+<div class="stat"><small>Semesta (U)</small><strong id="uCount">15</strong></div>
+<div class="stat"><small>Himpunan A</small><strong id="aCount">8</strong><small>Matematika Diskrit</small></div>
+<div class="stat"><small>Himpunan B</small><strong id="bCount">9</strong><small>Algoritma & Pemrograman</small></div>
+<div class="stat"><small>Himpunan C</small><strong id="cCount">9</strong><small>Basis Data</small></div>
+</div>
+
+<div class="layout">
+<section class="panel">
+<h2>01 · Pilih operasi himpunan</h2>
+<label for="operation">Operasi</label>
+<select id="operation">
+<option value="union">Gabungan (A ∪ B)</option>
+<option value="intersection">Irisan (A ∩ B)</option>
+<option value="difference">Selisih (A − B)</option>
+<option value="complement">Komplemen (U − A)</option>
+</select>
+
+<div class="row">
+<div>
+<label for="set1">Himpunan pertama</label>
+<select id="set1">
+<option value="A">A — Matematika Diskrit</option>
+<option value="B">B — Algoritma dan Pemrograman</option>
+<option value="C">C — Basis Data</option>
+</select>
+</div>
+<div>
+<label for="set2">Himpunan kedua</label>
+<select id="set2">
+<option value="B">B — Algoritma dan Pemrograman</option>
+<option value="A">A — Matematika Diskrit</option>
+<option value="C">C — Basis Data</option>
+</select>
+</div>
+</div>
+
+<div class="actions">
+<button id="calculate">Hitung hasil</button>
+<button class="secondary" id="showAll">Tampilkan semua data</button>
+</div>
+
+<div class="result-box" aria-live="polite">
+<div class="result-head">
+<strong id="resultTitle">Hasil operasi</strong>
+<span class="count" id="resultCount">0 anggota</span>
+</div>
+<ul class="results" id="resultList">
+<li>Pilih operasi, lalu tekan "Hitung hasil".</li>
+</ul>
+<p class="note" id="formulaNote"></p>
+</div>
+
+<h3>Ringkasan himpunan</h3>
+<div class="pills">
+<span class="pill">U = seluruh mahasiswa</span>
+<span class="pill">A = Matematika Diskrit</span>
+<span class="pill">B = Algoritma & Pemrograman</span>
+<span class="pill">C = Basis Data</span>
+</div>
+</section>
+
+<section class="panel">
+<h2>02 · Keanggotaan himpunan</h2>
+<p class="note">Setiap kartu memperlihatkan anggota pada kategori masing-masing. Seorang mahasiswa dapat menjadi anggota lebih dari satu himpunan.</p>
+<div id="setCards" class="diagram"></div>
+<h3>Contoh aturan</h3>
+<ul class="note">
+<li>Jika mahasiswa mengambil Matematika Diskrit, ID masuk himpunan A.</li>
+<li>Jika mahasiswa mengambil Algoritma dan Pemrograman, ID masuk himpunan B.</li>
+<li>Jika mahasiswa mengambil Basis Data, ID masuk himpunan C.</li>
+<li>Komplemen A berarti anggota semesta U yang tidak ada di A.</li>
+</ul>
+</section>
+</div>
+
+<section class="panel wide">
+<div class="result-head">
+<h2 style="margin:0">03 · Dataset awal</h2>
+<span class="count" id="tableCount">15 record</span>
+</div>
+<label for="search">Cari ID, nama, atau mata kuliah</label>
+<input id="search" placeholder="Contoh: M004 atau Basis Data">
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>ID</th><th>Nama</th><th>Mata kuliah yang diambil</th><th>Keanggotaan</th></tr>
+</thead>
+<tbody id="datasetBody"></tbody>
+</table>
+</div>
+<p class="note">Semua nama dan data pada aplikasi ini merupakan data contoh fiktif untuk pembelajaran.</p>
+</section>
+
+<section class="panel wide">
+<h2>04 · Makna hasil operasi</h2>
+<div class="row">
+<div><b>Gabungan (A ∪ B)</b><p class="note">Anggota yang berada di A atau B atau keduanya.</p></div>
+<div><b>Irisan (A ∩ B)</b><p class="note">Anggota yang berada di A dan B sekaligus.</p></div>
+<div><b>Selisih (A − B)</b><p class="note">Anggota yang berada di A, tetapi tidak berada di B.</p></div>
+<div><b>Komplemen (U − A)</b><p class="note">Anggota semesta U yang tidak termasuk A.</p></div>
+</div>
+</section>
+</main>
+
+<footer>PJBL-2 · Sistem Klasifikasi Data dengan Himpunan · HTML, CSS, dan JavaScript</footer>
+
+<script>
+const data = [
+{id:"M001",nama:"Alya Putri",mata_kuliah:["Matematika Diskrit","Algoritma dan Pemrograman"]},
+{id:"M002",nama:"Bima Pratama",mata_kuliah:["Matematika Diskrit","Basis Data"]},
+{id:"M003",nama:"Citra Lestari",mata_kuliah:["Algoritma dan Pemrograman","Basis Data"]},
+{id:"M004",nama:"Daffa Ramadhan",mata_kuliah:["Matematika Diskrit","Algoritma dan Pemrograman","Basis Data"]},
+{id:"M005",nama:"Eka Safitri",mata_kuliah:["Matematika Diskrit"]},
+{id:"M006",nama:"Farhan Akbar",mata_kuliah:["Algoritma dan Pemrograman"]},
+{id:"M007",nama:"Gita Maharani",mata_kuliah:["Basis Data"]},
+{id:"M008",nama:"Hafiz Maulana",mata_kuliah:["Matematika Diskrit","Basis Data"]},
+{id:"M009",nama:"Intan Permata",mata_kuliah:["Matematika Diskrit","Algoritma dan Pemrograman"]},
+{id:"M010",nama:"Joko Saputra",mata_kuliah:["Algoritma dan Pemrograman","Basis Data"]},
+{id:"M011",nama:"Kirana Dewi",mata_kuliah:["Matematika Diskrit","Algoritma dan Pemrograman","Basis Data"]},
+{id:"M012",nama:"Lukman Hakim",mata_kuliah:["Matematika Diskrit"]},
+{id:"M013",nama:"Maya Anggraini",mata_kuliah:["Basis Data"]},
+{id:"M014",nama:"Naufal Rizki",mata_kuliah:["Matematika Diskrit","Algoritma dan Pemrograman"]},
+{id:"M015",nama:"Ovi Amelia",mata_kuliah:["Algoritma dan Pemrograman"]}
+];
+
+const labels = {
+A:"Matematika Diskrit",
+B:"Algoritma dan Pemrograman",
+C:"Basis Data"
+};
+
+const membership = {A:new Set(),B:new Set(),C:new Set()};
+
+data.forEach(s => {
+if(s.mata_kuliah.includes(labels.A)) membership.A.add(s.id);
+if(s.mata_kuliah.includes(labels.B)) membership.B.add(s.id);
+if(s.mata_kuliah.includes(labels.C)) membership.C.add(s.id);
+});
+
+const U = new Set(data.map(s => s.id));
+const byId = id => data.find(s => s.id === id);
+const sortSet = s => [...s].sort();
+
+function renderSetCards(){
+document.getElementById("setCards").innerHTML =
+["A","B","C"].map(k => `
+<div class="set-card">
+<b>${k} · ${labels[k]}</b>
+<span>${sortSet(membership[k]).map(id => id+" — "+byId(id).nama).join("<br>")}</span>
+<p class="note">${membership[k].size} anggota</p>
+</div>`).join("");
+}
+
+function renderTable(){
+const q = document.getElementById("search").value.toLowerCase();
+const rows = data.filter(s =>
+(s.id+" "+s.nama+" "+s.mata_kuliah.join(" ")).toLowerCase().includes(q)
+);
+
+document.getElementById("datasetBody").innerHTML = rows.map(s => {
+const mem = ["A","B","C"].filter(k => membership[k].has(s.id)).join(", ") || "—";
+return `<tr>
+<td>${s.id}</td>
+<td>${s.nama}</td>
+<td>${s.mata_kuliah.join(", ")}</td>
+<td>${mem}</td>
+</tr>`;
+}).join("");
+
+document.getElementById("tableCount").textContent = rows.length+" record";
+}
+
+function calculate(){
+const op = document.getElementById("operation").value;
+const a = document.getElementById("set1").value;
+const b = document.getElementById("set2").value;
+const S1 = membership[a];
+const S2 = membership[b];
+
+let result, title, formula;
+
+if(op === "union"){
+result = new Set([...S1,...S2]);
+title = `${a} ∪ ${b}`;
+formula = `Anggota yang berada di ${a} atau ${b}, termasuk yang berada di keduanya.`;
+}
+else if(op === "intersection"){
+result = new Set([...S1].filter(x => S2.has(x)));
+title = `${a} ∩ ${b}`;
+formula = `Anggota yang berada di ${a} dan ${b} sekaligus.`;
+}
+else if(op === "difference"){
+result = new Set([...S1].filter(x => !S2.has(x)));
+title = `${a} − ${b}`;
+formula = `Anggota ${a} yang tidak termasuk dalam ${b}.`;
+}
+else{
+result = new Set([...U].filter(x => !S1.has(x)));
+title = `U − ${a}`;
+formula = `Semua anggota semesta U yang tidak termasuk dalam ${a}.`;
+}
+
+const ids = sortSet(result);
+document.getElementById("resultTitle").textContent = title;
+document.getElementById("resultCount").textContent = ids.length+" anggota";
+document.getElementById("resultList").innerHTML = ids.length
+? ids.map(id => `<li><b>${id}</b> — ${byId(id).nama}</li>`).join("")
+: '<li class="empty">Hasil kosong (∅), tidak ada anggota yang memenuhi operasi ini.</li>';
+
+document.getElementById("formulaNote").textContent = formula;
+}
+
+document.getElementById("calculate").addEventListener("click",calculate);
+
+document.getElementById("showAll").addEventListener("click",() => {
+document.getElementById("search").value = "";
+renderTable();
+document.getElementById("resultTitle").textContent = "Semesta U";
+document.getElementById("resultCount").textContent = U.size+" anggota";
+document.getElementById("resultList").innerHTML = data.map(s =>
+`<li><b>${s.id}</b> — ${s.nama}</li>`).join("");
+document.getElementById("formulaNote").textContent = "Semesta U berisi seluruh record pada dataset.";
+});
+
+document.getElementById("search").addEventListener("input",renderTable);
+
+document.getElementById("operation").addEventListener("change",() => {
+const op = document.getElementById("operation").value;
+document.getElementById("set2").disabled = op === "complement";
+calculate();
+});
+
+document.getElementById("set1").addEventListener("change",calculate);
+document.getElementById("set2").addEventListener("change",calculate);
+
+document.getElementById("uCount").textContent = U.size;
+document.getElementById("aCount").textContent = membership.A.size;
+document.getElementById("bCount").textContent = membership.B.size;
+document.getElementById("cCount").textContent = membership.C.size;
+
+renderSetCards();
+renderTable();
+calculate();
+</script>
+</body>
+</html>
